@@ -11,6 +11,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -18,13 +20,18 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import lombok.SneakyThrows;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import network.ycc.waterdog.pe.packet.PEHandshake;
 
 public final class LanguageAPI {
 
@@ -256,11 +263,19 @@ public final class LanguageAPI {
         if (!(sender instanceof ProxiedPlayer))
             return "en";
 
-        final Locale locale = ((ProxiedPlayer) sender).getLocale();
-        if (locale == null)
-            return "en";
-
-        return locale.getLanguage();
+        ProxiedPlayer p = (ProxiedPlayer) sender;
+        PendingConnection pendingConnection = p.getPendingConnection();
+        String lang = "en";
+        if(genericInvokeMethod(pendingConnection, "getHandshake") instanceof PEHandshake) {
+            PEHandshake handshake = (PEHandshake) genericInvokeMethod(pendingConnection, "getHandshake");
+            lang = new Locale(handshake.getClientInfo().get("LanguageCode").getAsString().split("_")[0]).getLanguage();
+        } else {
+            final Locale locale = ((ProxiedPlayer) sender).getLocale();
+            if (locale != null) {
+                lang = locale.getLanguage();
+            }
+        }
+        return lang;
     }
 
     private static Map<String, String> getPlaceholders(final String pluginName,
@@ -281,6 +296,23 @@ public final class LanguageAPI {
             message = message.replace("§" + placeholder + "§",
                     placeholders.get(placeholder));
         return ChatColor.translateAlternateColorCodes('&', message);
+    }
+
+    @SneakyThrows
+    public static Object genericInvokeMethod(Object obj, String methodName,
+                                             Object... params) {
+        int paramCount = params.length;
+        Method method;
+        Object requiredObj = null;
+        Class<?>[] classArray = new Class<?>[paramCount];
+        for (int i = 0; i < paramCount; i++) {
+            classArray[i] = params[i].getClass();
+        }
+        method = obj.getClass().getDeclaredMethod(methodName, classArray);
+        method.setAccessible(true);
+        requiredObj = method.invoke(obj, params);
+
+        return requiredObj;
     }
 
 }

@@ -1,8 +1,9 @@
 package de.max_overlack.languageapi;
 
-import de.max_overlack.languageapi.RegisteredPlugin;
 import java.util.HashMap;
 import java.util.Map;
+
+import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public final class LanguageAPIPlugin extends Plugin {

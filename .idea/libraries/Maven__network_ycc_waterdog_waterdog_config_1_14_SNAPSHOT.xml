@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: network.ycc.waterdog:waterdog-config:1.14-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/network/ycc/waterdog/waterdog-config/1.14-SNAPSHOT/waterdog-config-1.14-20191206.203437-169.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/network/ycc/waterdog/waterdog-config/1.14-SNAPSHOT/waterdog-config-1.14-20191206.203437-169-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/network/ycc/waterdog/waterdog-config/1.14-SNAPSHOT/waterdog-config-1.14-20191206.203437-169-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
